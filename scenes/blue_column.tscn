@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://djedlj363c3kr"]
+
+[ext_resource type="Texture2D" uid="uid://c55dixxx362lf" path="res://assets/pieces/Blue Column.png" id="1_7su77"]
+[ext_resource type="PackedScene" uid="uid://dimhfx4c1igfv" path="res://scenes/piece.tscn" id="1_rwg4e"]
+
+[node name="Blue_Column" instance=ExtResource("1_rwg4e")]
+
+[node name="Sprite2D" parent="." index="0"]
+texture = ExtResource("1_7su77")
