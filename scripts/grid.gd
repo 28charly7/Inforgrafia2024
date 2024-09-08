@@ -16,7 +16,7 @@ var state
 var possible_pieces = [
 	preload("res://scenes/blue_piece.tscn"),
 	preload("res://scenes/green_piece.tscn"),
-	preload("res://scenes/light_green_piece.tscn"),
+	preload("res://scenes/light_piece.tscn"),
 	preload("res://scenes/pink_piece.tscn"),
 	preload("res://scenes/yellow_piece.tscn"),
 	preload("res://scenes/orange_piece.tscn"),
@@ -32,10 +32,10 @@ var special_pieces_C = {
 var special_pieces_R = {
 	"blue": preload("res://scenes/blue_row.tscn"),
 	"green": preload("res://scenes/green_row.tscn"),
-	"yellow": preload("res://scenes/light_row.tscn"),
+	"light": preload("res://scenes/light_row.tscn"),
 	"orange": preload("res://scenes/orange_row.tscn"),
-	"light": preload("res://scenes/pink_row.tscn"),
-	"pink": preload("res://scenes/yellow_row.tscn")
+	"pink": preload("res://scenes/pink_row.tscn"),
+	"yellow": preload("res://scenes/yellow_row.tscn")
 }
  
 # current pieces in scene
