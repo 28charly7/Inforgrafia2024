@@ -21,15 +21,22 @@ var possible_pieces = [
 	preload("res://scenes/yellow_piece.tscn"),
 	preload("res://scenes/orange_piece.tscn"),
 ]
-var special_pieces = [ 
-	preload("res://scenes/blue_column.tscn"),
-	preload("res://scenes/green_column.tscn"),
-	preload("res://scenes/yellow_column.tscn"),
-	preload("res://scenes/orange_column.tscn"),
-	preload("res://scenes/light_column.tscn"),
-	preload("res://scenes/pink_column.tscn")
-	
-]
+var special_pieces_C = {
+	"blue": preload("res://scenes/blue_column.tscn"),
+	"green": preload("res://scenes/green_column.tscn"),
+	"yellow": preload("res://scenes/yellow_column.tscn"),
+	"orange": preload("res://scenes/orange_column.tscn"),
+	"light": preload("res://scenes/light_column.tscn"),
+	"pink": preload("res://scenes/pink_column.tscn")
+}
+var special_pieces_R = {
+	"blue": preload("res://scenes/blue_row.tscn"),
+	"green": preload("res://scenes/green_row.tscn"),
+	"yellow": preload("res://scenes/light_row.tscn"),
+	"orange": preload("res://scenes/orange_row.tscn"),
+	"light": preload("res://scenes/pink_row.tscn"),
+	"pink": preload("res://scenes/yellow_row.tscn")
+}
  
 # current pieces in scene
 var all_pieces = []
@@ -46,6 +53,7 @@ var first_touch = Vector2.ZERO
 var final_touch = Vector2.ZERO
 var is_controlling = false
 
+@export var is_special_: bool = false
 # scoring variables and signals
 @export var score_label: Label
 @export var score: int
@@ -53,14 +61,18 @@ var is_controlling = false
 @export var counter_label: Label
 @export var counter_time: int
 @export var counter_movement: int
+# timer
+@export var timer_: Label
+@export var timer_i: int
+@export var timer_runnig: bool
 #Gameover
 @export var game_Over: Label 
 @export var final_t: bool
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	timer_i = 100 * 50
 	final_t = false
-	counter_movement = 2
-	#print(score)
+	counter_movement = 20
 	state = MOVE
 	randomize()
 	all_pieces = make_2d_array()
@@ -181,21 +193,70 @@ func touch_difference(grid_1, grid_2):
 	
 func counter_mov():
 	counter_movement -= 1
-	
 	counter_label.text = str(counter_movement)
-	
+func eliminate_column(column):
+	for j in height:
+		if all_pieces[column][j] != null:
+			all_pieces[column][j].queue_free()
+			all_pieces[column][j] = null
 func _process(delta):
+	tiempo()
+	if timer_i <= 0:
+		game_over()
 	if state == MOVE and not final_t:
 		touch_input()
+		print(timer_i)
 	elif counter_movement <= 0: #Agregar el gameover
 		game_over()
+#Tiempo transcurriendo
+func tiempo():
+	if timer_i >= 0:
+		timer_i -= 1
+		timer_.text = str(timer_i/100)
+	else: 
+		timer_runnig = false 
+#crear fichas especiales
+func create_special_piece_C(i,j,color):
+	var special_c = special_pieces_C[color].instantiate()
+	#special_p.is_special = true 
+	add_child(special_c)
+	special_c.position = grid_to_pixel(i,j)
+	if i + 1 < width:
+		all_pieces[i+1][j] = special_c
+	
+func create_special_piece_R(i,j,color):
+	var special_r = special_pieces_R[color].instantiate() 
+	add_child(special_r)
+	special_r.position = grid_to_pixel(i,j)
+	if j + 1<height:
+		all_pieces[i][j+1] = special_r
+
+
+func is_special():
+		return is_special
 
 func find_matches():
 	for i in width:
 		for j in height:
 			if all_pieces[i][j] != null:
-				var current_color = all_pieces[i][j].color
+				var current_color = all_pieces[i][j].color 
 				# detect horizontal matches
+				if( i > 0 and i < width - 3 
+					and 
+					all_pieces[i - 1][j] != null and all_pieces[i + 1][j] != null and all_pieces[i + 2][j] != null
+					and 
+					all_pieces[i - 1][j].color == current_color and all_pieces[i + 1][j].color == current_color and all_pieces[i + 2][j].color == current_color
+				):
+					all_pieces[i-1][j].matched = true
+					all_pieces[i-1][j].dim()
+					all_pieces[i][j].matched = true
+					all_pieces[i][j].dim()
+					all_pieces[i+1][j].matched = true
+					all_pieces[i+1][j].dim()
+					all_pieces[i+2][j].matched = true
+					all_pieces[i+2][j].dim()
+					create_special_piece_R(i+1,j,current_color)
+				
 				if (
 					i > 0 and i < width -1 
 					and 
@@ -210,6 +271,21 @@ func find_matches():
 					all_pieces[i + 1][j].matched = true
 					all_pieces[i + 1][j].dim()
 				# detect vertical matches
+				if( j > 0 and j < height - 3 
+					and 
+					all_pieces[i][j-1] != null and all_pieces[i][j+1] != null and all_pieces[i][j+2] != null
+					and 
+					all_pieces[i][j-1].color == current_color and all_pieces[i][j+1].color == current_color and all_pieces[i][j+2].color == current_color
+				):
+					all_pieces[i][j-1].matched = true
+					all_pieces[i][j-1].dim()
+					all_pieces[i][j].matched = true
+					all_pieces[i][j].dim()
+					all_pieces[i][j+1].matched = true
+					all_pieces[i][j+1].dim()
+					all_pieces[i][j+2].matched = true
+					all_pieces[i][j+2].dim()
+					create_special_piece_C(i,j+1,current_color)
 				if (
 					j > 0 and j < height -1 
 					and 
@@ -223,7 +299,34 @@ func find_matches():
 					all_pieces[i][j].dim()
 					all_pieces[i][j + 1].matched = true
 					all_pieces[i][j + 1].dim()
-					
+				#if all_pieces[i][j].is_special:
+					#if (
+						#j > 0 and j < width -1 
+						#and 
+						#all_pieces[i][j - 1] != null and all_pieces[i][j + 1]
+						#and 
+						#all_pieces[i][j - 1].color == current_color and all_pieces[i][j + 1].color == current_color
+					#):
+						#all_pieces[i][j - 1].matched = true
+						#all_pieces[i][j - 1].dim()
+						#all_pieces[i][j].matched = true
+						#all_pieces[i][j].dim()
+						#all_pieces[i][j + 1].matched = true
+						#all_pieces[i][j + 1].dim()
+					#if (
+						#j > 0 and j < height -1 
+						#and 
+						#all_pieces[i][j - 1] != null and all_pieces[i][j + 1]
+						#and 
+						#all_pieces[i][j - 1].color == current_color and all_pieces[i][j + 1].color == current_color
+					#):
+						#all_pieces[i][j - 1].matched = true
+						#all_pieces[i][j - 1].dim()
+						#all_pieces[i][j].matched = true
+						#all_pieces[i][j].dim()
+						#all_pieces[i][j + 1].matched = true
+						#all_pieces[i][j + 1].dim()
+				#
 	get_parent().get_node("destroy_timer").start()
 	
 func destroy_matched():
@@ -314,8 +417,12 @@ func game_over():
 	final_t = true 
 	state = WAIT
 	var over: String
-	over = "GAME OVER"
+	if score <=5: 
+		over = "You lose"
+		
+	elif score > 5:
+		over = "You win"
 	game_Over.text = over
 	
-	#_process(false)
+	timer_runnig = false
 	print("game over")

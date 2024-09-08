@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://cruh8bbcfvyvr"]
+[gd_scene load_steps=7 format=3 uid="uid://cruh8bbcfvyvr"]
 
 [ext_resource type="Texture2D" uid="uid://brp4euwugc18f" path="res://assets/background.png" id="1_blg2x"]
 [ext_resource type="PackedScene" uid="uid://bt33j5dwxano3" path="res://scenes/top_ui.tscn" id="2_wrbvl"]
 [ext_resource type="Texture2D" uid="uid://cdunkljd6up72" path="res://assets/bottom_ui.png" id="3_jy0d4"]
 [ext_resource type="Script" path="res://scripts/grid.gd" id="4_4jr62"]
+[ext_resource type="Texture2D" uid="uid://b16mstal83djo" path="res://assets/pieces/Blue Piece.png" id="5_ywhf1"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_aiic3"]
 font_size = 80
@@ -39,6 +40,11 @@ counter_label = NodePath("../top_ui/MarginContainer/HBoxContainer/counter_label"
 counter_movement = 2
 timer_ = NodePath("../top_ui/Label")
 game_Over = NodePath("../GAME_OVER")
+
+[node name="Sprite2D" type="Sprite2D" parent="grid"]
+position = Vector2(42, 974)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("5_ywhf1")
 
 [node name="destroy_timer" type="Timer" parent="."]
 wait_time = 0.5

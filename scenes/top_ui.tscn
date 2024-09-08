@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://bt33j5dwxano3"]
+[gd_scene load_steps=7 format=3 uid="uid://bt33j5dwxano3"]
 
 [ext_resource type="Texture2D" uid="uid://bacqucona7fm3" path="res://assets/top_ui.png" id="1_j7odh"]
 [ext_resource type="Script" path="res://scripts/top_ui.gd" id="2_0qkha"]
@@ -11,6 +11,10 @@ font_size = 24
 [sub_resource type="LabelSettings" id="LabelSettings_8bjlm"]
 font = ExtResource("2_pei76")
 font_size = 60
+
+[sub_resource type="LabelSettings" id="LabelSettings_k1h5r"]
+font = ExtResource("2_pei76")
+font_size = 24
 
 [node name="top_ui" type="TextureRect"]
 offset_right = 576.0
@@ -55,3 +59,12 @@ horizontal_alignment = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 5
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 459.0
+offset_top = 26.0
+offset_right = 543.0
+offset_bottom = 73.0
+text = "000"
+label_settings = SubResource("LabelSettings_k1h5r")
